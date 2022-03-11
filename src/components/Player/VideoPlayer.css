@@ -15,6 +15,7 @@
   height: 100%;
   z-index: 1;
 }
+
 .vp-controls {
   position: absolute;
   display: flex;
@@ -29,10 +30,6 @@
   background-image: linear-gradient(transparent, #000);
   transition: opacity 300ms ease-out;
   z-index: 15;
-}
-.vp-controls.hide {
-  opacity: 0;
-  pointer-events: none;
 }
 .vp-controls__header {
   display: flex;
@@ -51,7 +48,6 @@
   padding: 0 2rem;
   gap: 2rem;
 }
-
 .vp-controls__body > div {
   position: relative;
   display: flex;
@@ -205,7 +201,6 @@
   transform-origin: left;
   transition: transform 200ms ease-out;
 }
-
 .vp-volume__range--background,
 .vp-volume__range--current,
 .vp-volume__range--seek {
@@ -214,7 +209,6 @@
   height: 100%;
   border-radius: 50px;
 }
-
 .vp-volume__range--background {
   background-color: #858585;
 }
@@ -351,34 +345,6 @@
 }
 .menu-main-exit-active {
   transform: translateX(110%);
-}
-.key-volume-enter {
-  opacity: 0;
-}
-.key-volume-enter > div {
-  opacity: 0;
-  transform: translateY(-100%);
-}
-.key-volume-enter-active {
-  opacity: 1;
-}
-.key-volume-enter-active > div {
-  opacity: 1;
-  transform: translateY(0);
-}
-.key-volume-exit {
-  opacity: 1;
-}
-.key-volume-exit > div {
-  opacity: 1;
-  transform: translateY(0);
-}
-.key-volume-exit-active {
-  opacity: 0;
-}
-.key-volume-exit-active > div {
-  opacity: 0;
-  transform: translateY(-100%);
 }
 
 @keyframes vp-loader {
