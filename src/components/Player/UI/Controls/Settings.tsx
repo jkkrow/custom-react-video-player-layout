@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 import Btn from './Btn';
 import { ReactComponent as SettingIcon } from 'icons/gear.svg';
 
@@ -15,4 +13,4 @@ const Settings: React.FC<SettingsProps> = ({ onToggle }) => {
   );
 };
 
-export default memo(Settings);
+export default Settings;

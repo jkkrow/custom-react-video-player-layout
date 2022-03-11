@@ -1,13 +1,7 @@
-import { memo } from 'react';
-
-interface TimeProps {
-  time: string;
-}
-
-const Time: React.FC<TimeProps> = ({ time }) => (
-  <time className="vp-time" dateTime={time}>
-    {time}
+const Time: React.FC = () => (
+  <time className="vp-time" dateTime="00:00">
+    00:00
   </time>
 );
 
-export default memo(Time);
+export default Time;

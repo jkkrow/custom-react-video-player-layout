@@ -1,18 +1,12 @@
-import { memo } from 'react';
-
 import Btn from './Btn';
 import { ReactComponent as TrackRewindIcon } from 'icons/track-rewind.svg';
 
-interface RewindProps {
-  onRewind: () => void;
-}
-
-const Rewind: React.FC<RewindProps> = ({ onRewind }) => {
+const Rewind: React.FC = () => {
   return (
-    <Btn label="- 10 seconds" onClick={onRewind}>
+    <Btn label="- 10 seconds" onClick={() => {}}>
       <TrackRewindIcon />
     </Btn>
   );
 };
 
-export default memo(Rewind);
+export default Rewind;

@@ -1,24 +1,15 @@
-import { useState, memo, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import { ReactComponent as ArrowLeftIcon } from 'icons/arrow-left.svg';
-import { useOutsideClickHandler } from 'hooks/outside-click-hook';
 
 interface DropdownProps {
   on: boolean;
-  playbackRates: number[];
-  activePlaybackRate: number;
   onClose: (on: boolean) => void;
-  onChangePlaybackRate: (playbackRate: number) => void;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({
-  on,
-  playbackRates,
-  activePlaybackRate,
-  onClose,
-  onChangePlaybackRate,
-}) => {
+const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
+  const [isMounted, setIsMounted] = useState(false);
   const [isIndex, setIsIndex] = useState(true);
   const [activeMenu, setActiveMenu] = useState<'resolution' | 'speed'>('speed');
   const [dropdownHeight, setDropdownHeight] = useState<'initial' | number>(
@@ -27,7 +18,22 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useOutsideClickHandler(dropdownRef.current, () => onClose(false));
+  useEffect(() => {
+    if (!isMounted) return;
+
+    const outsideClickHandler = (event: MouseEvent) => {
+      if (!isMounted || !dropdownRef || !dropdownRef.current) return;
+      if (!dropdownRef.current.contains(event.target as Node)) {
+        onClose(false);
+      }
+    };
+
+    document.addEventListener('click', outsideClickHandler);
+
+    return () => {
+      document.removeEventListener('click', outsideClickHandler);
+    };
+  }, [isMounted, onClose]);
 
   useEffect(() => {
     if (!on) return;
@@ -46,7 +52,12 @@ const Dropdown: React.FC<DropdownProps> = ({
     []
   );
 
+  const dropdownEnteredHandler = useCallback(() => {
+    setIsMounted(true);
+  }, []);
+
   const dropdownExitedHandler = useCallback(() => {
+    setIsMounted(false);
     setIsIndex(true);
     setDropdownHeight('initial');
   }, []);
@@ -55,56 +66,64 @@ const Dropdown: React.FC<DropdownProps> = ({
     setDropdownHeight(element.offsetHeight);
   }, []);
 
-  const indexMenu = useMemo(() => {
-    return (
-      <div className="vp-dropdown__menu">
-        <ul className="vp-dropdown__list">
-          <li
-            className="vp-dropdown__item"
-            onClick={() => selectMenuHandler('speed')}
-          >
-            <span>Speed</span>
-            <span>x {activePlaybackRate}</span>
-          </li>
-        </ul>
+  const indexMenu = (
+    <div className="vp-dropdown__menu">
+      <ul className="vp-dropdown__list">
+        <li
+          className="vp-dropdown__item"
+          onClick={() => selectMenuHandler('speed')}
+        >
+          <span>Speed</span>
+          <span>x 1</span>
+        </li>
+        <li
+          className="vp-dropdown__item"
+          onClick={() => selectMenuHandler('resolution')}
+        >
+          <span>Resolution</span>
+          <span>1080p</span>
+        </li>
+      </ul>
+    </div>
+  );
+
+  const menuList = (
+    <div className="vp-dropdown__menu">
+      <div className="vp-dropdown__label" onClick={() => setIsIndex(true)}>
+        <ArrowLeftIcon />
+        <span>
+          {activeMenu === 'speed' && 'Speed'}
+          {activeMenu === 'resolution' && 'Resolution'}
+        </span>
       </div>
-    );
-  }, [activePlaybackRate, selectMenuHandler]);
-
-  const menuList = useMemo(() => {
-    const changePlaybackRateHandler = (playbackRate: number) => {
-      onChangePlaybackRate(playbackRate);
-      setIsIndex(true);
-    };
-
-    switch (activeMenu) {
-      case 'speed':
-        return (
-          <div className="vp-dropdown__menu">
-            <div
-              className="vp-dropdown__label"
+      <ul className="vp-dropdown__list">
+        {activeMenu === 'speed' &&
+          [0.5, 0.75, 1, 1.25, 1.5].map((playbackRate) => (
+            <li
+              key={playbackRate}
+              className={`vp-dropdown__item${
+                playbackRate === 1 ? ' active' : ''
+              }`}
               onClick={() => setIsIndex(true)}
             >
-              <ArrowLeftIcon />
-              <span>Speed</span>
-            </div>
-            <ul className="vp-dropdown__list">
-              {playbackRates.map((playbackRate) => (
-                <li
-                  key={playbackRate}
-                  className={`vp-dropdown__item${
-                    activePlaybackRate === playbackRate ? ' active' : ''
-                  }`}
-                  onClick={() => changePlaybackRateHandler(playbackRate)}
-                >
-                  {playbackRate}
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-    }
-  }, [activeMenu, playbackRates, activePlaybackRate, onChangePlaybackRate]);
+              {playbackRate}
+            </li>
+          ))}
+        {activeMenu === 'resolution' &&
+          [540, 720, 1080].map((resolution) => (
+            <li
+              key={resolution}
+              className={`vp-dropdown__item${
+                resolution === 1080 ? ' active' : ''
+              }`}
+              onClick={() => setIsIndex(true)}
+            >
+              {resolution}
+            </li>
+          ))}
+      </ul>
+    </div>
+  );
 
   return (
     <CSSTransition
@@ -113,6 +132,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       timeout={200}
       mountOnEnter
       unmountOnExit
+      onEntered={dropdownEnteredHandler}
       onExited={dropdownExitedHandler}
     >
       <div
@@ -146,4 +166,4 @@ const Dropdown: React.FC<DropdownProps> = ({
   );
 };
 
-export default memo(Dropdown);
+export default Dropdown;
