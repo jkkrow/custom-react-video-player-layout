@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import { ReactComponent as ArrowLeftIcon } from 'icons/arrow-left.svg';
@@ -11,7 +11,7 @@ interface DropdownProps {
 const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isIndex, setIsIndex] = useState(true);
-  const [activeMenu, setActiveMenu] = useState<'resolution' | 'speed'>('speed');
+  const [activeType, setActiveType] = useState<'speed' | 'resolution'>('speed');
   const [dropdownHeight, setDropdownHeight] = useState<'initial' | number>(
     'initial'
   );
@@ -44,27 +44,24 @@ const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
     setDropdownHeight(dropdownMenu?.offsetHeight || 'initial');
   }, [on]);
 
-  const selectMenuHandler = useCallback(
-    (activeMenu: 'resolution' | 'speed') => {
-      setIsIndex(false);
-      setActiveMenu(activeMenu);
-    },
-    []
-  );
+  const selectMenuHandler = (type: 'speed' | 'resolution') => {
+    setIsIndex(false);
+    setActiveType(type);
+  };
 
-  const dropdownEnteredHandler = useCallback(() => {
+  const dropdownEnteredHandler = () => {
     setIsMounted(true);
-  }, []);
+  };
 
-  const dropdownExitedHandler = useCallback(() => {
+  const dropdownExitedHandler = () => {
     setIsMounted(false);
     setIsIndex(true);
     setDropdownHeight('initial');
-  }, []);
+  };
 
-  const calcHeight = useCallback((element) => {
+  const calcHeight = (element: HTMLElement) => {
     setDropdownHeight(element.offsetHeight);
-  }, []);
+  };
 
   const indexMenu = (
     <div className="vp-dropdown__menu">
@@ -87,17 +84,17 @@ const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
     </div>
   );
 
-  const menuList = (
+  const mainMenu = (
     <div className="vp-dropdown__menu">
       <div className="vp-dropdown__label" onClick={() => setIsIndex(true)}>
         <ArrowLeftIcon />
         <span>
-          {activeMenu === 'speed' && 'Speed'}
-          {activeMenu === 'resolution' && 'Resolution'}
+          {activeType === 'speed' && 'Speed'}
+          {activeType === 'resolution' && 'Resolution'}
         </span>
       </div>
       <ul className="vp-dropdown__list">
-        {activeMenu === 'speed' &&
+        {activeType === 'speed' &&
           [0.5, 0.75, 1, 1.25, 1.5].map((playbackRate) => (
             <li
               key={playbackRate}
@@ -109,7 +106,7 @@ const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
               {playbackRate}
             </li>
           ))}
-        {activeMenu === 'resolution' &&
+        {activeType === 'resolution' &&
           [540, 720, 1080].map((resolution) => (
             <li
               key={resolution}
@@ -142,7 +139,7 @@ const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
       >
         <CSSTransition
           in={isIndex}
-          classNames="menu-index"
+          classNames="vp-menu-index"
           timeout={300}
           mountOnEnter
           unmountOnExit
@@ -153,13 +150,13 @@ const Dropdown: React.FC<DropdownProps> = ({ on, onClose }) => {
 
         <CSSTransition
           in={!isIndex}
-          classNames="menu-main"
+          classNames="vp-menu-main"
           timeout={300}
           mountOnEnter
           unmountOnExit
           onEnter={calcHeight}
         >
-          {menuList}
+          {mainMenu}
         </CSSTransition>
       </div>
     </CSSTransition>

@@ -1,15 +1,15 @@
 import { useState, useCallback } from 'react';
 
-import Playback from './UI/Controls/Playback';
-import Skip from './UI/Controls/Skip';
-import Rewind from './UI/Controls/Rewind';
-import Volume from './UI/Controls/Volume';
-import Progress from './UI/Controls/Progress';
-import Time from './UI/Controls/Time';
-import Pip from './UI/Controls/Pip';
-import Fullscreen from './UI/Controls/Fullscreen';
-import Settings from './UI/Controls/Settings';
-import Dropdown from './UI/Controls/Dropdown';
+import Playback from './Controls/Playback';
+import Skip from './Controls/Skip';
+import Rewind from './Controls/Rewind';
+import Volume from './Controls/Volume';
+import Progress from './Controls/Progress';
+import Time from './Controls/Time';
+import Pip from './Controls/Pip';
+import Fullscreen from './Controls/Fullscreen';
+import Settings from './Controls/Settings';
+import Dropdown from './Controls/Dropdown';
 import './VideoPlayer.css';
 
 const VideoPlayer: React.FC = () => {
