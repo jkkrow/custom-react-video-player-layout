@@ -4,7 +4,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <VideoPlayer src={src[2]} autoPlay={true} />
+      <VideoPlayer src={src[4]} autoPlay={true} />
     </div>
   );
 }
